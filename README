@@ -1,0 +1,37 @@
+/* Ionescu Andrei Ionut - 331CB */
+
+				Tema 3
+
+	For the first part of the homework, the coordinators will be the first to find out the
+topology, and after that, they will tell their workers what they found out. Every coordinator
+finds out about their workers from the text file and each one of them sends a "hello message".
+The worker knows that the first message it receives is from the process that will be his
+coordinator. After each of the main 4 processes has finished sending hello messages, they
+forward to the next process (rank + 1) their own workers. After that, every coordinator
+maintains a copy with the workers he just found out about and then forwards the message
+further, so in 3 waves of message sending, all the coordinators will know the topology. Then,
+all of them will send what they know to their workers.
+	After everybody knows the topology, process 0 will calculate how much work to give to
+its workers so it is evenly spread out with all the workers in the system, and then it sends
+the rest of the array to 3, which keeps some work and forwards it and so on. After this, the
+coordinators send the numbers to the workers, and then receive back the result. I didn't use
+scatter for this exercise because the coordinators would keep some of the work, which is not
+correct. After that, everybody sends towards 0 the results, and the processes just forward
+the messages they receive. For example, 3 receives 2's result, and just forwards it to 0. This
+mechanism also works for the cases with broken links.
+	The even spread between the workers is done the following way, the current coordinator
+looks at how many workers there are to come, including its own, and divides the total number
+of elements to the number of workers. Then, if there is a remainder, every worker until the
+remainder dissapears, or there are no more workers, receives one more number to their task.
+This way, in the example given in the paper, the workers 4, 5, 9 and 6 would have to multily by
+5 two numbers, and the rest would have 1.
+	For the case when there is no link between 0 and 1, everybody sends their topology to the next
+coordinator, except for 1. After that, they forward whatever results they receive. This way, after
+3 waves, 1 knows all the topology, 2 knows everything except for 1, 3 knows only 0, and 0 knows
+nothing. After that, the same process happens backwards, everybody starts forwarding to the
+previous coordinator. Like this, every coordinator the topology. The rest of the logic is the same
+as before.
+	BONUS:
+	For the bonus, all I did was make a couple of alterations to some of the functions, so that
+the messages are not forwarded all the way to 1, they stop at 2. The idea for how the topology
+is computed and how it works is the same, with the note that we simply don't care about 1.
